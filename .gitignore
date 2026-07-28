@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.coverage*
+.hypothesis/
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+.venv/
+build/
+dist/
+
+# Editors and operating systems
+.DS_Store
+.idea/
+.vscode/
+
+# Generated research artifacts
+data/raw/
+data/processed/
+outputs/
+work/
+docs/_build/
+*.npz
+*.parquet
+
+# Keep directory placeholders and small committed fixtures.
+!data/**/.gitkeep
+!tests/data/*.parquet
+!tests/data/*.npz
+

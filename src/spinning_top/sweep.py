@@ -18,9 +18,7 @@ from .sampling import generate_samples, sample_to_config
 from .simulation import OutcomeRecord, SimulationResult, make_outcome, simulate
 
 
-def stable_run_id(
-    config: SimulationConfig, schema_version: int, sample: dict[str, float]
-) -> str:
+def stable_run_id(config: SimulationConfig, schema_version: int, sample: dict[str, float]) -> str:
     """Return a stable content-derived run identifier."""
     payload = json.dumps(
         {"schema_version": schema_version, "config": config.to_dict(), "sample": sample},
@@ -126,9 +124,7 @@ def run_sweep(settings: SweepConfig) -> Path:
         for outcome, result in results:
             if settings.save_diagnostics and result is not None:
                 save_diagnostics(diagnostics / f"{outcome.run_id}.npz", result)
-            _atomic_parquet(
-                fragments / f"{outcome.run_id}.parquet", outcome.to_flat_dict()
-            )
+            _atomic_parquet(fragments / f"{outcome.run_id}.parquet", outcome.to_flat_dict())
 
     if settings.workers == 1:
         consume(map(_run_one, tasks))

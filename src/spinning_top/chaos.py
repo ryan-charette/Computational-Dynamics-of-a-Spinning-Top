@@ -37,7 +37,7 @@ def _segment(config: SimulationConfig, state: Array, duration: float) -> Array:
     result = integrate_adaptive(segment_config)
     if not result.success:
         raise RuntimeError(result.message)
-    return result.state[-1]
+    return np.asarray(result.state[-1], dtype=float)
 
 
 def _difference(reference: Array, nearby: Array, velocity_scale: float) -> tuple[Array, float]:

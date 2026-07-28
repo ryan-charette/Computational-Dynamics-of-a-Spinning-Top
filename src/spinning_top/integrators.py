@@ -89,4 +89,3 @@ def integrate_rk4(config: SimulationConfig, step: float | None = None) -> Integr
             current_time += local_step
         states[index] = current
     return IntegrationResult(times, states, 0.0, True, "fixed-step RK4 completed")
-

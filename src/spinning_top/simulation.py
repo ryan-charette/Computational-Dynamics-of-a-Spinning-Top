@@ -82,9 +82,7 @@ def _diagnostics(
     tilt = np.arccos(np.clip(world_axis[:, 2], -1.0, 1.0))
     axial_spin = state[:, 4:] @ axis
     transverse = state[:, 4:] - axial_spin[:, None] * axis
-    ratio = np.linalg.norm(transverse, axis=1) / np.maximum(
-        np.abs(axial_spin), detection.epsilon
-    )
+    ratio = np.linalg.norm(transverse, axis=1) / np.maximum(np.abs(axial_spin), detection.epsilon)
     stop = stopping_time(time, axial_spin, detection.stop_spin_rate, detection.stop_hold_time)
     wobble, amplitude = wobble_onset(
         time,
@@ -107,14 +105,10 @@ def simulate(
     """Run one simulation and compute all configured diagnostics."""
     detection = detection or DetectionConfig()
     chaos = chaos or ChaosConfig()
-    integrated = (
-        integrate_adaptive(config) if integrator == "adaptive" else integrate_rk4(config)
-    )
+    integrated = integrate_adaptive(config) if integrator == "adaptive" else integrate_rk4(config)
     time = integrated.time
     state = integrated.state
-    tilt, amplitude, ratio, _axial, wobble, stop = _diagnostics(
-        config, time, state, detection
-    )
+    tilt, amplitude, ratio, _axial, wobble, stop = _diagnostics(config, time, state, detection)
     energy = np.array([total_energy(row, config) for row in state])
     momentum = np.array([angular_momentum_world(row, config) for row in state])
     chaos_result = (
@@ -149,9 +143,7 @@ def simulate(
     )
 
 
-def make_outcome(
-    run_id: str, config: SimulationConfig, result: SimulationResult
-) -> OutcomeRecord:
+def make_outcome(run_id: str, config: SimulationConfig, result: SimulationResult) -> OutcomeRecord:
     """Create a right-censoring-aware outcome record."""
     if not result.success:
         censoring = "numerical_failure"

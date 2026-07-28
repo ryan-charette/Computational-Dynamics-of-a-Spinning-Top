@@ -83,4 +83,3 @@ extrapolated beyond the listed parameter ranges without new validation.
     target.parent.mkdir(parents=True, exist_ok=True)
     target.write_text(text, encoding="utf-8")
     return target
-

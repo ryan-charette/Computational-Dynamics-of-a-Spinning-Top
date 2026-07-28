@@ -88,4 +88,3 @@ def classify(
     if stop_time is not None:
         return "stable_until_stop"
     return "no_event_within_horizon"
-

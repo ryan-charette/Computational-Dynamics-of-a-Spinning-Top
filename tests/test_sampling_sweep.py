@@ -17,18 +17,14 @@ def test_sampling_is_reproducible() -> None:
 
 
 def test_sample_builds_tilted_configuration() -> None:
-    config = sample_to_config(
-        SimulationConfig(), {"initial_tilt": 0.2, "initial_spin_rate": 50}
-    )
+    config = sample_to_config(SimulationConfig(), {"initial_tilt": 0.2, "initial_spin_rate": 50})
     assert config.initial_angular_velocity[2] == pytest.approx(50)
     assert config.initial_quaternion != (1, 0, 0, 0)
 
 
 def test_stable_run_id_is_order_independent() -> None:
     config = SimulationConfig()
-    assert stable_run_id(config, 1, {"a": 1, "b": 2}) == stable_run_id(
-        config, 1, {"b": 2, "a": 1}
-    )
+    assert stable_run_id(config, 1, {"a": 1, "b": 2}) == stable_run_id(config, 1, {"b": 2, "a": 1})
 
 
 @pytest.mark.integration
@@ -62,4 +58,3 @@ def test_invalid_sample_is_isolated(tmp_path) -> None:
     frame = pd.read_parquet(run_sweep(settings))
     assert frame.loc[0, "classification"] == "numerical_failure"
     assert frame.loc[0, "exception_type"] == "ValueError"
-

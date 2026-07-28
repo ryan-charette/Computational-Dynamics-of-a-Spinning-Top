@@ -184,4 +184,3 @@ def load_sweep_config(path: str | Path) -> SweepConfig:
         schema_version=raw.get("schema_version", 1),
         save_diagnostics=raw.get("save_diagnostics", True),
     )
-

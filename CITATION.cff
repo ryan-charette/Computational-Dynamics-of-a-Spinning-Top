@@ -1,0 +1,12 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it using this metadata."
+title: "Computational Dynamics of a Spinning Top"
+type: software
+authors:
+  - family-names: Charette
+    given-names: Ryan
+repository-code: "https://github.com/ryan-charette/Computational-Dynamics-of-a-Spinning-Top"
+license: MIT
+version: 0.1.0
+date-released: 2026-07-28
+

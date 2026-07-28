@@ -2,12 +2,14 @@
 
 from __future__ import annotations
 
+from typing import Any
+
 import pandas as pd
 
 from .regression import FEATURES
 
 
-def fit_symbolic(frame: pd.DataFrame, *, iterations: int = 100) -> object:
+def fit_symbolic(frame: pd.DataFrame, *, iterations: int = 100) -> Any:
     """Fit PySR to observed, dimensionless wobble times."""
     try:
         from pysr import PySRRegressor
@@ -30,4 +32,3 @@ def fit_symbolic(frame: pd.DataFrame, *, iterations: int = 100) -> object:
     )
     model.fit(data[FEATURES].to_numpy(), data["dimensionless_wobble_time"].to_numpy())
     return model
-

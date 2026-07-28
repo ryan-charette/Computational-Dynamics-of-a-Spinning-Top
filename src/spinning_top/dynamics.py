@@ -15,12 +15,15 @@ def gravitational_torque(q: npt.ArrayLike, config: SimulationConfig) -> Array:
     """Return gravitational torque in the body frame."""
     gravity_world = np.array([0.0, 0.0, -config.gravity])
     gravity_body = rotation_matrix(q).T @ gravity_world
-    return np.cross(np.asarray(config.center_of_mass), config.mass * gravity_body)
+    return np.asarray(
+        np.cross(np.asarray(config.center_of_mass), config.mass * gravity_body),
+        dtype=float,
+    )
 
 
 def damping_torque(omega: npt.ArrayLike, config: SimulationConfig) -> Array:
     """Return diagonal linear damping torque in the body frame."""
-    return -np.asarray(config.damping) * np.asarray(omega, dtype=float)
+    return np.asarray(-np.asarray(config.damping) * np.asarray(omega, dtype=float), dtype=float)
 
 
 def rhs(_time: float, state: npt.ArrayLike, config: SimulationConfig) -> Array:
@@ -58,5 +61,4 @@ def angular_momentum_world(state: npt.ArrayLike, config: SimulationConfig) -> Ar
     """Return angular momentum expressed in world coordinates."""
     values = np.asarray(state)
     body = np.asarray(config.inertia) * values[4:]
-    return rotation_matrix(values[:4]) @ body
-
+    return np.asarray(rotation_matrix(values[:4]) @ body, dtype=float)

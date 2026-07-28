@@ -38,9 +38,7 @@ def generate_samples(
         values = generator.uniform(bounds[:, 0], bounds[:, 1], size=(count, len(names)))
     else:
         raise ValueError(f"unsupported sampler: {method}")
-    return [
-        {name: float(row[index]) for index, name in enumerate(names)} for row in values
-    ]
+    return [{name: float(row[index]) for index, name in enumerate(names)} for row in values]
 
 
 def sample_to_config(base: SimulationConfig, sample: Mapping[str, float]) -> SimulationConfig:
@@ -78,10 +76,10 @@ def sample_to_config(base: SimulationConfig, sample: Mapping[str, float]) -> Sim
     )
     return replace(
         base,
-        inertia=tuple(inertia),
+        inertia=(float(inertia[0]), float(inertia[1]), float(inertia[2])),
         mass=sample.get("mass", base.mass),
         center_of_mass=tuple(center),
-        damping=tuple(damping),
+        damping=(float(damping[0]), float(damping[1]), float(damping[2])),
         initial_quaternion=tuple(quaternion),
         initial_angular_velocity=tuple(omega),
         gravity=sample.get("gravity", base.gravity),

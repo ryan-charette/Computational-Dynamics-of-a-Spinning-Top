@@ -45,4 +45,3 @@ def test_rotation_matrix_is_orthogonal(values: list[float]) -> None:
 def test_invalid_quaternion_rejected() -> None:
     with pytest.raises(ValueError, match="nonzero"):
         normalize([0, 0, 0, 0])
-

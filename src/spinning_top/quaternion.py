@@ -53,7 +53,7 @@ def rotation_matrix(q: npt.ArrayLike) -> Array:
 
 def rotate(q: npt.ArrayLike, vector: npt.ArrayLike) -> Array:
     """Rotate a body-frame vector into world coordinates."""
-    return rotation_matrix(q) @ np.asarray(vector, dtype=float)
+    return np.asarray(rotation_matrix(q) @ np.asarray(vector, dtype=float), dtype=float)
 
 
 def from_axis_angle(axis: npt.ArrayLike, angle: float) -> Array:
@@ -84,11 +84,10 @@ def rotation_vector(q: npt.ArrayLike) -> Array:
     if vector_norm < 1e-14:
         return 2.0 * unit[1:]
     angle = 2.0 * np.arctan2(vector_norm, np.clip(unit[0], -1.0, 1.0))
-    return unit[1:] * (angle / vector_norm)
+    return np.asarray(unit[1:] * (angle / vector_norm), dtype=float)
 
 
 def orientation_distance(q1: npt.ArrayLike, q2: npt.ArrayLike) -> float:
     """Return the sign-invariant geodesic distance between orientations."""
     dot = abs(float(np.dot(normalize(q1), normalize(q2))))
     return float(2.0 * np.arccos(np.clip(dot, -1.0, 1.0)))
-

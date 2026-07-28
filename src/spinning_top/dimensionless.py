@@ -54,8 +54,5 @@ def add_dimensionless_features(frame: pd.DataFrame) -> pd.DataFrame:
             1,
         )
     )
-    result["dimensionless_wobble_time"] = (
-        result["wobble_onset_time"].astype(float) / timescale
-    )
+    result["dimensionless_wobble_time"] = result["wobble_onset_time"].astype(float) / timescale
     return result
-

@@ -26,9 +26,7 @@ def save_diagnostics(path: str | Path, result: SimulationResult) -> Path:
         angular_momentum_world=result.angular_momentum_world,
         ftle_time=result.ftle_time,
         ftle=result.ftle,
-        wobble_onset_time=np.nan
-        if result.wobble_onset_time is None
-        else result.wobble_onset_time,
+        wobble_onset_time=np.nan if result.wobble_onset_time is None else result.wobble_onset_time,
         chaos_onset_time=np.nan if result.chaos_onset_time is None else result.chaos_onset_time,
         stopping_time=np.nan if result.stopping_time is None else result.stopping_time,
     )

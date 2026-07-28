@@ -14,7 +14,6 @@ authors = [{ name = "Ryan Charette" }]
 classifiers = [
   "Development Status :: 3 - Alpha",
   "Intended Audience :: Science/Research",
-  "License :: OSI Approved :: MIT License",
   "Programming Language :: Python :: 3",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
@@ -24,7 +23,7 @@ classifiers = [
   "Typing :: Typed",
 ]
 dependencies = [
-  "numpy>=1.26",
+  "numpy>=1.26,<2.5",
   "pandas>=2.2",
   "pyarrow>=15",
   "PyYAML>=6",
@@ -53,7 +52,6 @@ lint = [
 typing = [
   "mypy>=1.15",
   "pandas-stubs>=2.2",
-  "scipy-stubs>=1.15",
   "types-PyYAML>=6",
 ]
 docs = [
@@ -95,6 +93,7 @@ addopts = [
 testpaths = ["tests"]
 xfail_strict = true
 filterwarnings = ["error"]
+log_level = "INFO"
 markers = [
   "integration: integration tests",
   "slow: computationally expensive tests",
@@ -113,8 +112,6 @@ fail_under = 85
 
 [tool.ruff]
 line-length = 100
-target-version = "py311"
-src = ["src"]
 
 [tool.ruff.lint]
 select = ["B", "C4", "E", "F", "I", "N", "NPY", "PERF", "PIE", "PTH", "RUF", "SIM", "UP"]
@@ -128,13 +125,22 @@ python_version = "3.11"
 strict = true
 packages = ["spinning_top"]
 warn_unreachable = true
+enable_error_code = ["ignore-without-code", "redundant-expr", "truthy-bool"]
 
 [[tool.mypy.overrides]]
-module = ["lifelines.*", "pysr.*", "sklearn.*"]
+module = ["joblib.*", "lifelines.*", "pysr.*", "sklearn.*"]
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = ["scipy.*"]
+follow_imports = "skip"
 ignore_missing_imports = true
 
 [tool.codespell]
 skip = "*.ipynb,*.svg,*.lock"
 
 [tool.repo-review]
-ignore = { PP308 = "The project is not publishing distributions yet." }
+
+[tool.repo-review.ignore]
+PC170 = "Documentation uses MyST Markdown exclusively; there are no reStructuredText sources."
+PP308 = "The project is not publishing distributions yet."

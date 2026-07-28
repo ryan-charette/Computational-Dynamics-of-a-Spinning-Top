@@ -58,4 +58,3 @@ def test_regression_pipeline_runs() -> None:
 def test_survival_pipeline_uses_censoring() -> None:
     model = fit_weibull_aft(add_dimensionless_features(raw_frame()))
     assert model.median_survival_time_ > 0
-

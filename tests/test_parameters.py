@@ -33,4 +33,3 @@ def test_detector_rejects_nonpositive_values() -> None:
 def test_sweep_rejects_decreasing_range() -> None:
     with pytest.raises(ValueError):
         SweepConfig(ranges={"mass": (2, 1)})
-

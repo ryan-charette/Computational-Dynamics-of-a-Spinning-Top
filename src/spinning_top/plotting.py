@@ -8,9 +8,10 @@ from typing import Any
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+from matplotlib.figure import Figure
 
 
-def _save(fig: plt.Figure, path: Path) -> Path:
+def _save(fig: Figure, path: Path) -> Path:
     path.parent.mkdir(parents=True, exist_ok=True)
     fig.tight_layout()
     fig.savefig(path, dpi=160)
@@ -72,9 +73,7 @@ def plot_parameter_map(
     return _save(fig, Path(path))
 
 
-def plot_prediction_validation(
-    actual: np.ndarray, predicted: np.ndarray, path: str | Path
-) -> Path:
+def plot_prediction_validation(actual: np.ndarray, predicted: np.ndarray, path: str | Path) -> Path:
     """Plot predicted versus simulated onset time."""
     finite = np.isfinite(actual) & np.isfinite(predicted)
     fig, axis = plt.subplots()
@@ -134,4 +133,3 @@ def plot_representatives(
         if len(archive["ftle"]):
             created.append(plot_ftle(archive, output_root / f"{category}_ftle.png"))
     return created
-

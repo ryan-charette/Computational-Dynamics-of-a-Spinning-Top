@@ -73,14 +73,10 @@ def _discover(args: argparse.Namespace) -> None:
     output = Path(args.output)
     output.mkdir(parents=True, exist_ok=True)
     joblib.dump(best.estimator, output / f"{best.name}.joblib")
-    critical, _baseline_prediction, baseline_metrics = fit_critical_spin_baseline(
-        train, test
-    )
+    critical, _baseline_prediction, baseline_metrics = fit_critical_spin_baseline(train, test)
     survival = fit_weibull_aft(train)
     joblib.dump(survival, output / "weibull_aft.joblib")
-    selected_formula = (
-        f"{best.name} model over features: " + ", ".join(FEATURES)
-    )
+    selected_formula = f"{best.name} model over features: " + ", ".join(FEATURES)
     if args.symbolic:
         symbolic = fit_symbolic(train, iterations=args.symbolic_iterations)
         joblib.dump(symbolic, output / "symbolic.joblib")

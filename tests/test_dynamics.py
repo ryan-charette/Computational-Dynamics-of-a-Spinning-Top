@@ -76,4 +76,3 @@ def test_rk4_converges_toward_adaptive_solution() -> None:
     coarse_error = np.linalg.norm(coarse.state[-1] - adaptive.state[-1])
     fine_error = np.linalg.norm(fine.state[-1] - adaptive.state[-1])
     assert fine_error < coarse_error
-

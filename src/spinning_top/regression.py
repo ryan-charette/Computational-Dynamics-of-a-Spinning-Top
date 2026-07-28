@@ -42,16 +42,14 @@ def critical_spin_time(
     with np.errstate(divide="ignore", invalid="ignore"):
         prediction = inertia_3 / damping_3 * np.log(initial_spin / critical_spin)
     prediction[(damping_3 <= 0) | (initial_spin <= critical_spin)] = np.nan
-    return prediction
+    return np.asarray(prediction, dtype=float)
 
 
 def fit_critical_spin_baseline(
     train: pd.DataFrame, test: pd.DataFrame
 ) -> tuple[float, np.ndarray, dict[str, float]]:
     """Estimate a constant critical spin and evaluate exponential decay."""
-    observed = train.loc[train["wobble_observed"]].dropna(
-        subset=["wobble_onset_time"]
-    )
+    observed = train.loc[train["wobble_observed"]].dropna(subset=["wobble_onset_time"])
     omega0 = observed["parameter_initial_angular_velocity_3"].to_numpy(float)
     inertia3 = observed["parameter_inertia_3"].to_numpy(float)
     damping3 = observed["parameter_damping_3"].to_numpy(float)
@@ -82,9 +80,7 @@ def metrics(actual: np.ndarray, predicted: np.ndarray) -> dict[str, float]:
     }
 
 
-def fit_interpretable_models(
-    train: pd.DataFrame, test: pd.DataFrame
-) -> list[ModelResult]:
+def fit_interpretable_models(train: pd.DataFrame, test: pd.DataFrame) -> list[ModelResult]:
     """Fit linear, log-linear, polynomial, robust, and sparse models."""
     train = train.loc[train["wobble_observed"] & train[FEATURES].notna().all(axis=1)]
     test = test.loc[test["wobble_observed"] & test[FEATURES].notna().all(axis=1)]
@@ -97,9 +93,7 @@ def fit_interpretable_models(
     estimators: dict[str, Any] = {
         "linear": Pipeline([("impute", SimpleImputer()), ("model", LinearRegression())]),
         "log_linear": TransformedTargetRegressor(
-            regressor=Pipeline(
-                [("impute", SimpleImputer()), ("model", LinearRegression())]
-            ),
+            regressor=Pipeline([("impute", SimpleImputer()), ("model", LinearRegression())]),
             func=np.log1p,
             inverse_func=np.expm1,
         ),
@@ -110,9 +104,7 @@ def fit_interpretable_models(
                 ("scale", StandardScaler()),
                 (
                     "model",
-                    ElasticNetCV(
-                        cv=min(5, len(train)), random_state=0, max_iter=100_000
-                    ),
+                    ElasticNetCV(cv=min(5, len(train)), random_state=0, max_iter=100_000),
                 ),
             ]
         ),
@@ -129,9 +121,7 @@ def fit_interpretable_models(
                 ("scale", StandardScaler()),
                 (
                     "model",
-                    ElasticNetCV(
-                        cv=min(5, len(train)), random_state=0, max_iter=100_000
-                    ),
+                    ElasticNetCV(cv=min(5, len(train)), random_state=0, max_iter=100_000),
                 ),
             ]
         ),
