@@ -30,7 +30,9 @@ def generate_samples(
         values = np.asarray(list(product(*axes)), dtype=float)[:count]
     elif method == "sobol":
         sampler = qmc.Sobol(d=len(names), scramble=True, seed=seed)
-        values = qmc.scale(sampler.random(count), bounds[:, 0], bounds[:, 1])
+        exponent = int(np.ceil(np.log2(count)))
+        unit_values = sampler.random_base2(exponent)[:count]
+        values = bounds[:, 0] + unit_values * (bounds[:, 1] - bounds[:, 0])
     elif method == "random":
         generator = np.random.default_rng(seed)
         values = generator.uniform(bounds[:, 0], bounds[:, 1], size=(count, len(names)))

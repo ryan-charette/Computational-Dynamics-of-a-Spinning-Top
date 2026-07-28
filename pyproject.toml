@@ -85,7 +85,13 @@ packages = ["src/spinning_top"]
 
 [tool.pytest.ini_options]
 minversion = "8.0"
-addopts = ["-ra", "--showlocals", "--strict-config", "--strict-markers"]
+addopts = [
+  "-ra",
+  "--showlocals",
+  "--strict-config",
+  "--strict-markers",
+  "--basetemp=work/pytest",
+]
 testpaths = ["tests"]
 xfail_strict = true
 filterwarnings = ["error"]
@@ -132,4 +138,3 @@ skip = "*.ipynb,*.svg,*.lock"
 
 [tool.repo-review]
 ignore = { PP308 = "The project is not publishing distributions yet." }
-

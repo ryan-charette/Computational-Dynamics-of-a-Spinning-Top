@@ -108,7 +108,12 @@ def fit_interpretable_models(
                 ("impute", SimpleImputer()),
                 ("poly", PolynomialFeatures(degree=2, include_bias=False)),
                 ("scale", StandardScaler()),
-                ("model", ElasticNetCV(cv=min(5, len(train)), random_state=0)),
+                (
+                    "model",
+                    ElasticNetCV(
+                        cv=min(5, len(train)), random_state=0, max_iter=100_000
+                    ),
+                ),
             ]
         ),
         "robust": Pipeline(
@@ -122,7 +127,12 @@ def fit_interpretable_models(
             [
                 ("impute", SimpleImputer()),
                 ("scale", StandardScaler()),
-                ("model", ElasticNetCV(cv=min(5, len(train)), random_state=0)),
+                (
+                    "model",
+                    ElasticNetCV(
+                        cv=min(5, len(train)), random_state=0, max_iter=100_000
+                    ),
+                ),
             ]
         ),
     }
