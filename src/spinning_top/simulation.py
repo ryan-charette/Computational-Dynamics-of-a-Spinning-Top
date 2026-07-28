@@ -66,7 +66,11 @@ class OutcomeRecord:
         record = asdict(self)
         parameters = record.pop("parameters")
         for key, value in parameters.items():
-            record[f"parameter_{key}"] = value
+            if isinstance(value, (list, tuple)):
+                for index, item in enumerate(value, start=1):
+                    record[f"parameter_{key}_{index}"] = item
+            else:
+                record[f"parameter_{key}"] = value
         return record
 
 
@@ -173,4 +177,3 @@ def make_outcome(
         message=result.message,
         parameters=config.to_dict(),
     )
-
