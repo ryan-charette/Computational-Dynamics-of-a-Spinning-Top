@@ -73,7 +73,7 @@ def _discover(args: argparse.Namespace) -> None:
     output = Path(args.output)
     output.mkdir(parents=True, exist_ok=True)
     joblib.dump(best.estimator, output / f"{best.name}.joblib")
-    critical, _baseline_prediction, baseline_metrics = fit_critical_spin_baseline(train, test)
+    critical, baseline_prediction, baseline_metrics = fit_critical_spin_baseline(train, test)
     survival = fit_weibull_aft(train)
     joblib.dump(survival, output / "weibull_aft.joblib")
     selected_formula = f"{best.name} model over features: " + ", ".join(FEATURES)
@@ -81,6 +81,38 @@ def _discover(args: argparse.Namespace) -> None:
         symbolic = fit_symbolic(train, iterations=args.symbolic_iterations)
         joblib.dump(symbolic, output / "symbolic.joblib")
         selected_formula = str(symbolic.sympy())
+    from .plotting import (
+        plot_baseline_comparison,
+        plot_prediction_validation,
+        plot_residuals,
+    )
+
+    complete_test = test[FEATURES].notna().all(axis=1) & test["wobble_observed"]
+    validation = test.loc[complete_test]
+    formula_star = best.estimator.predict(validation[FEATURES])
+    actual_star = validation["dimensionless_wobble_time"].to_numpy(float)
+    figure_root = output / "figures"
+    plot_prediction_validation(
+        actual_star, formula_star, figure_root / "predicted_vs_simulated.png"
+    )
+    for feature in FEATURES:
+        plot_residuals(
+            validation[feature].to_numpy(float),
+            actual_star,
+            formula_star,
+            figure_root / f"residual_{feature}.png",
+        )
+    gravity_scale = (
+        validation["gravity_timescale"].to_numpy(float)
+        if "gravity_timescale" in validation
+        else np.ones(len(validation))
+    )
+    plot_baseline_comparison(
+        validation["wobble_onset_time"].to_numpy(float),
+        baseline_prediction[complete_test.to_numpy()],
+        formula_star * gravity_scale,
+        figure_root / "baseline_vs_formula.png",
+    )
     summary = {
         "selected_model": best.name,
         "selected_formula": selected_formula,
@@ -105,7 +137,42 @@ def _report(args: argparse.Namespace) -> None:
     from .report import generate_report
 
     frame = pd.read_parquet(args.input)
+    if args.figures:
+        from .plotting import plot_parameter_map, plot_representatives
+
+        figure_root = Path(args.figures)
+        if {"dimensionless_spin", "dimensionless_damping"}.issubset(frame.columns):
+            plot_parameter_map(
+                frame,
+                "dimensionless_spin",
+                "dimensionless_damping",
+                "wobble_onset_time",
+                figure_root / "parameter_wobble_time.png",
+            )
+            plot_parameter_map(
+                frame,
+                "dimensionless_spin",
+                "dimensionless_damping",
+                "classification",
+                figure_root / "parameter_classification.png",
+            )
+        if args.diagnostics:
+            plot_representatives(frame, args.diagnostics, figure_root)
     print(generate_report(frame, args.output, args.model_summary))
+
+
+def _validate(args: argparse.Namespace) -> None:
+    from .plotting import plot_convergence
+    from .validation import convergence_study
+
+    config, _detection, _chaos = load_simulation_bundle(args.config)
+    frame, time, adaptive, fixed = convergence_study(config)
+    target = Path(args.output)
+    target.parent.mkdir(parents=True, exist_ok=True)
+    frame.to_parquet(target, index=False)
+    if args.figure:
+        plot_convergence(time, adaptive, fixed, args.figure)
+    print(target)
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -142,7 +209,15 @@ def build_parser() -> argparse.ArgumentParser:
     report.add_argument("--input", required=True)
     report.add_argument("--model-summary")
     report.add_argument("--output", default="outputs/reports/final_report.md")
+    report.add_argument("--figures")
+    report.add_argument("--diagnostics")
     report.set_defaults(function=_report)
+
+    validate = subparsers.add_parser("validate", help="run a numerical convergence study")
+    validate.add_argument("--config", required=True)
+    validate.add_argument("--output", default="outputs/reports/convergence.parquet")
+    validate.add_argument("--figure", default="outputs/figures/convergence.png")
+    validate.set_defaults(function=_validate)
     return parser
 
 

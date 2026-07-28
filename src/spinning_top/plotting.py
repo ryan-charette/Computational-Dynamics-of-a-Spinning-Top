@@ -98,6 +98,25 @@ def plot_residuals(
     return _save(fig, Path(path))
 
 
+def plot_baseline_comparison(
+    actual: np.ndarray,
+    baseline: np.ndarray,
+    formula: np.ndarray,
+    path: str | Path,
+) -> Path:
+    """Compare analytical-baseline and discovered-formula errors."""
+    fig, axis = plt.subplots()
+    axis.scatter(actual, baseline, label="spin-decay baseline", alpha=0.7)
+    axis.scatter(actual, formula, label="selected formula", alpha=0.7)
+    finite = np.concatenate((actual, baseline, formula))
+    finite = finite[np.isfinite(finite)]
+    bounds = [float(np.min(finite)), float(np.max(finite))]
+    axis.plot(bounds, bounds, color="black", linestyle="--")
+    axis.set(xlabel="Simulated onset [s]", ylabel="Predicted onset [s]")
+    axis.legend()
+    return _save(fig, Path(path))
+
+
 def plot_convergence(
     time: np.ndarray, adaptive: np.ndarray, rk4: np.ndarray, path: str | Path
 ) -> Path:

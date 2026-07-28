@@ -1,0 +1,4 @@
+run_id,wobble_observed,wobble_onset_time,observation_horizon,classification,success,censoring_reason
+example-observed,true,4.2,10.0,regular_wobble,true,
+example-censored,false,,10.0,no_event_within_horizon,true,not_observed_within_horizon
+example-stopped,false,,10.0,stable_until_stop,true,stopped_before_wobble

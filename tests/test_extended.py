@@ -25,6 +25,7 @@ from spinning_top.parameters import (
 )
 from spinning_top.plotting import (
     load_diagnostics,
+    plot_baseline_comparison,
     plot_convergence,
     plot_ftle,
     plot_parameter_map,
@@ -49,6 +50,7 @@ from spinning_top.report import generate_report
 from spinning_top.sampling import generate_samples, sample_to_config
 from spinning_top.simulation import make_outcome, simulate
 from spinning_top.symbolic import fit_symbolic
+from spinning_top.validation import convergence_study
 
 
 def model_frame(count: int = 24) -> pd.DataFrame:
@@ -194,6 +196,9 @@ def test_plotting_and_report_from_saved_data(tmp_path: Path) -> None:
     predicted = actual + 0.1
     assert plot_prediction_validation(actual, predicted, tmp_path / "prediction.png").exists()
     assert plot_residuals(actual, actual, predicted, tmp_path / "residual.png").exists()
+    assert plot_baseline_comparison(
+        actual, predicted + 0.1, predicted, tmp_path / "baseline.png"
+    ).exists()
     assert plot_convergence(
         result.time, result.state, result.state + 1e-6, tmp_path / "convergence.png"
     ).exists()
@@ -227,6 +232,21 @@ def test_outcome_censoring_branches() -> None:
     assert make_outcome("b", config, stopped).censoring_reason == "stopped_before_wobble"
     failed = replace(result, success=False, classification="numerical_failure")
     assert make_outcome("c", config, failed).censoring_reason == "numerical_failure"
+
+
+def test_convergence_study() -> None:
+    config = SimulationConfig(
+        gravity=0,
+        damping=(0, 0, 0),
+        center_of_mass=(0, 0, 0),
+        horizon=0.04,
+        output_interval=0.01,
+        max_step=0.005,
+    )
+    frame, time, adaptive, fixed = convergence_study(config, (0.01, 0.005))
+    assert list(frame["rk4_step"]) == [0.01, 0.005]
+    assert frame.iloc[1]["maximum_state_error"] < frame.iloc[0]["maximum_state_error"]
+    assert len(time) == len(adaptive) == len(fixed)
 
 
 def test_cli_analysis_discovery_and_report(tmp_path: Path) -> None:

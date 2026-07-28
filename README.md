@@ -67,6 +67,8 @@ python -m spinning_top discover-formula \
 python -m spinning_top report \
   --input data/processed/features.parquet \
   --model-summary outputs/models/summary.json
+python -m spinning_top validate \
+  --config configs/default_simulation.yaml
 ```
 
 ## Event definitions
@@ -125,4 +127,3 @@ validation.
 
 See the [documentation](docs/index.md), [contribution guide](CONTRIBUTING.md),
 and [citation metadata](CITATION.cff) for more.
-
