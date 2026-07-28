@@ -1,0 +1,42 @@
+simulation:
+  inertia: [0.2, 0.2, 0.3]
+  mass: 1.0
+  center_of_mass: [0.0, 0.0, 0.05]
+  reference_axis: [0.0, 0.0, 1.0]
+  gravity: 9.81
+  damping: [0.002, 0.002, 0.004]
+  initial_quaternion: [1.0, 0.0, 0.0, 0.0]
+  initial_angular_velocity: [0.0, 0.0, 100.0]
+  horizon: 30.0
+  output_interval: 0.02
+  method: DOP853
+  rtol: 1.0e-8
+  atol: 1.0e-10
+  max_step: 0.04
+detection:
+  rolling_window: 0.5
+  wobble_threshold: 0.034906585
+  hold_time: 0.5
+  stop_spin_rate: 0.5
+  stop_hold_time: 0.5
+chaos:
+  enabled: false
+ranges:
+  I1: [0.15, 0.24]
+  I2: [0.15, 0.24]
+  I3: [0.24, 0.36]
+  mass: [0.5, 2.0]
+  center_of_mass_distance: [0.02, 0.08]
+  damping: [0.001, 0.008]
+  initial_tilt: [0.017453293, 0.34906585]
+  initial_precession: [0.0, 6.283185307]
+  initial_spin_rate: [30.0, 150.0]
+  initial_transverse_angular_velocity: [0.0, 2.0]
+sample_count: 128
+seed: 20260728
+workers: 4
+sampler: sobol
+output_path: data/raw/sweep
+schema_version: 1
+save_diagnostics: true
+

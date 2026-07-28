@@ -1,0 +1,30 @@
+simulation:
+  inertia: [0.2, 0.2, 0.3]
+  mass: 1.0
+  center_of_mass: [0.0, 0.0, 0.05]
+  reference_axis: [0.0, 0.0, 1.0]
+  gravity: 9.81
+  damping: [0.002, 0.002, 0.004]
+  initial_quaternion: [0.996194698, 0.0, 0.087155743, 0.0]
+  initial_angular_velocity: [0.2, 0.0, 100.0]
+  horizon: 20.0
+  output_interval: 0.01
+  method: DOP853
+  rtol: 1.0e-9
+  atol: 1.0e-11
+  max_step: 0.02
+detection:
+  rolling_window: 0.5
+  wobble_threshold: 0.034906585
+  hold_time: 0.5
+  stop_spin_rate: 0.5
+  stop_hold_time: 0.5
+  epsilon: 1.0e-12
+chaos:
+  enabled: false
+  perturbation: 1.0e-8
+  renormalization_interval: 0.1
+  ftle_window: 1.0
+  threshold: 0.1
+  hold_time: 0.5
+

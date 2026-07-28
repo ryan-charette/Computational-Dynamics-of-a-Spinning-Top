@@ -45,6 +45,33 @@ def critical_spin_time(
     return prediction
 
 
+def fit_critical_spin_baseline(
+    train: pd.DataFrame, test: pd.DataFrame
+) -> tuple[float, np.ndarray, dict[str, float]]:
+    """Estimate a constant critical spin and evaluate exponential decay."""
+    observed = train.loc[train["wobble_observed"]].dropna(
+        subset=["wobble_onset_time"]
+    )
+    omega0 = observed["parameter_initial_angular_velocity_3"].to_numpy(float)
+    inertia3 = observed["parameter_inertia_3"].to_numpy(float)
+    damping3 = observed["parameter_damping_3"].to_numpy(float)
+    onset = observed["wobble_onset_time"].to_numpy(float)
+    inferred = omega0 * np.exp(-damping3 * onset / inertia3)
+    critical = float(np.median(inferred))
+    prediction = critical_spin_time(
+        test["parameter_initial_angular_velocity_3"].to_numpy(float),
+        np.full(len(test), critical),
+        test["parameter_inertia_3"].to_numpy(float),
+        test["parameter_damping_3"].to_numpy(float),
+    )
+    observed_test = test["wobble_observed"].to_numpy(bool) & np.isfinite(prediction)
+    score = metrics(
+        test.loc[observed_test, "wobble_onset_time"].to_numpy(float),
+        prediction[observed_test],
+    )
+    return critical, prediction, score
+
+
 def metrics(actual: np.ndarray, predicted: np.ndarray) -> dict[str, float]:
     """Compute standard formula-validation metrics."""
     return {
